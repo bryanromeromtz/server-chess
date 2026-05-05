@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import gamesRouter from "./routes/games";
+import authRouter from "./routes/auth";
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
+app.use("/auth", authRouter);
 app.use("/games", gamesRouter);
 
 app.listen(PORT, () => {
