@@ -1,5 +1,8 @@
 FROM node:22-alpine
 
+# instalar stockfish en el contenedor
+RUN apk add --no-cache stockfish
+
 WORKDIR /app
 
 COPY package*.json ./
@@ -8,10 +11,8 @@ RUN npm install
 
 COPY . .
 
-# genera el cliente de Prisma antes de compilar
 RUN npx prisma generate
 
-# compila TypeScript a JavaScript
 RUN npm run build
 
 EXPOSE 3001
