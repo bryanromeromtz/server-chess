@@ -5,6 +5,8 @@ import rateLimit from "express-rate-limit";
 import gamesRouter from "./routes/games";
 import authRouter from "./routes/auth";
 import logger from "./logger";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 dotenv.config();
 
@@ -40,9 +42,31 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/health", (req, res) => {
-  logger.info("Health check");
-  res.json({ status: "ok" });
+app.get("/health", async (req, res) => {
+  try {
+    // verificar conexión a la base de datos
+    await prisma.$queryRaw`SELECT 1`;
+    
+    logger.info("Health check OK");
+    res.json({
+      status: "ok",
+      timestamp: new Date().toISOString(),
+      services: {
+        server: "ok",
+        database: "ok",
+      }
+    });
+  } catch (error) {
+    logger.error("Health check failed", error);
+    res.status(503).json({
+      status: "error",
+      timestamp: new Date().toISOString(),
+      services: {
+        server: "ok",
+        database: "error",
+      }
+    });
+  }
 });
 
 app.use("/auth", authLimiter, authRouter);
