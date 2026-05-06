@@ -1,7 +1,7 @@
-FROM node:22-alpine
+FROM node:22-bookworm-slim
 
 # instalar stockfish en el contenedor
-RUN apk add --no-cache stockfish
+RUN apt-get update && apt-get install -y stockfish && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
