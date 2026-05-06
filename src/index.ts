@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import gamesRouter from "./routes/games";
 import authRouter from "./routes/auth";
+import logger from "./logger";
 
 dotenv.config();
 
@@ -33,12 +34,25 @@ app.use(cors());
 app.use(express.json());
 app.use(generalLimiter);
 
+// middleware para loggear todas las peticiones
+app.use((req, res, next) => {
+  logger.info(`${req.method} ${req.path} - ${req.ip}`);
+  next();
+});
+
 app.get("/health", (req, res) => {
+  logger.info("Health check");
   res.json({ status: "ok" });
 });
 
 app.use("/auth", authLimiter, authRouter);
 app.use("/games", gamesRouter);
+
+// middleware para loggear errores
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  logger.error(err);
+  res.status(500).json({ error: "Error interno del servidor" });
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
