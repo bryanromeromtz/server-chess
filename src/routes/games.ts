@@ -1,5 +1,5 @@
 import { Router, Response } from "express";
-import { PrismaClient } from "../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { Chess } from "chess.js";
 import { getBestMove } from "../stockfish";
 import { authMiddleware, AuthRequest } from "../middleware/auth";
