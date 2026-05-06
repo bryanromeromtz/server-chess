@@ -8,6 +8,9 @@ RUN npm install
 
 COPY . .
 
+# genera el cliente de Prisma antes de compilar
+RUN npx prisma generate
+
 # compila TypeScript a JavaScript
 RUN npm run build
 
